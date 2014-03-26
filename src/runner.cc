@@ -72,6 +72,7 @@ void runModel(RunInfo& info)
 
 struct ModelResults {
    int n, nError, nScore;
+   int pShift[2]; // {P(shift|win), P(shift|loss)}
 };
 
 void runNormal(RunData& run, ModelResults& results)
@@ -89,8 +90,49 @@ void runNormal(RunData& run, ModelResults& results)
       y = run.agent.respond();
       x = run.markov.step();
       run.agent.learn(x);
-      if (x != y && n >= start) results.nError++;
+      if (n >= start && x != y) results.nError++;
    }
+}
+
+// Run the simulation counting the frequencies of response-shifts after wins
+// and losses.
+void runCountShiftProbs(RunData& run, ModelResults& results)
+{
+   int x, y, prevWon, prevY;
+   int n, nWin = 0, nWinShift = 0, nLoss = 0, nLossShift = 0, start = 0;
+
+   results.n = results.nScore = run.info.nIter;
+
+   if (run.info.nScore > 0 && run.info.nScore < run.info.nIter) {
+      start = run.info.nIter - run.info.nScore;
+      results.nScore = run.info.nScore;
+   }
+
+   // add 1 because the first iteration only stores the X/Y values,
+   // without doing any comparison
+   start++;
+
+   for (n = 0; n < run.info.nIter; n++) {
+      y = run.agent.respond();
+      x = run.markov.step();
+      run.agent.learn(x);
+      if (n >= start) {
+         if (prevWon) {
+            nWin++;
+            if (y != prevY)
+               nWinShift++;
+         } else {
+            nLoss++;
+            if (y != prevY)
+               nLossShift++;
+         }
+      }
+      prevWon = (x == y);
+      prevY = y;
+   }
+
+   results.pShift[0] = nWinShift / (double) nWin;
+   results.pShift[1] = nLossShift / (double) nLoss;
 }
 
 void runWithOutput(RunData& run, ModelResults& results, std::ostream& output)
@@ -119,20 +161,37 @@ void runModel(RunData& run)
 
    // markov.clean();
    ModelResults results;
-   if (info.fileName && !info.outputScore) {
+   if (info.fileName) {
       ofstream fl(info.fileName);
-      runWithOutput(run, results, fl);
-   }
-   else if (info.outputScore) {
-      ofstream fl(info.fileName);
-      for (int i = 0; i < info.nRepetitions; i++) {
-         runNormal(run, results);
-         fl << (double)results.nError / results.nScore << "\n";
+      switch (info.outputMode) {
+      case OutputEvolution:
+         runWithOutput(run, results, fl);
+         break;
 
-         markov.clean();
-         agent.reset();
-         prepareRandom(run);
-         markov.prepare();
+      case OutputScore:
+         for (int i = 0; i < info.nRepetitions; i++) {
+            runNormal(run, results);
+            fl << (double)results.nError / results.nScore << "\n";
+
+            markov.clean();
+            agent.reset();
+            prepareRandom(run);
+            markov.prepare();
+         }
+         break;
+
+      case OutputShiftProbs:
+         for (int i = 0; i < info.nRepetitions; i++) {
+            runCountShiftProbs(run, results);
+            fl << results.pShift[0] << '\t' << results.pShift[1] << "\n";
+
+            markov.clean();
+            agent.reset();
+            prepareRandom(run);
+            markov.prepare();
+         }
+         break;
+
       }
    }
    else {

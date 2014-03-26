@@ -12,9 +12,18 @@ struct RunInfo {
    int nIter;
    char *fileName;
    int printScore;
-   int outputScore;
+   int outputMode; // for possible values, see enum OutputMode
    int nRepetitions;
    int nScore;
+};
+
+// Possible modes of outputting simulation data, set via
+// the RunInfo::outputMode parameter
+enum OutputMode {
+   OutputEvolution  = 0, // Output time series with x/y values, error rates
+                         // and extra parameters of the agent.
+   OutputScore      = 1, // Output only the final error rate of the agent.
+   OutputShiftProbs = 2, // Output only the computed P(shift|{win,loss}).
 };
 
 // extern "C"
