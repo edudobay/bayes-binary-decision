@@ -25,7 +25,7 @@ class RunInfo(Structure):
       ('nRuns', c_int),
       ('fileName', c_char_p),
       ('printScore', c_int),
-      ('outputScore', c_int),
+      ('outputMode', c_int),
       ('nRepetitions', c_int),
       ('nScore', c_int),
    ]
@@ -52,7 +52,7 @@ def create_runinfo(**kwargs):
       nRuns=kwargs['nRuns'],
       fileName=Data(kwargs['fileName']),
       printScore=int(bool(kwargs.get('printScore', False))),
-      outputScore=int(bool(kwargs.get('outputScore', False))),
+      outputMode=int(kwargs.get('outputMode', 0)),
       nRepetitions=int(kwargs.get('nRepetitions', 1)),
       nScore=int(kwargs.get('nScore', 0)),
    )
