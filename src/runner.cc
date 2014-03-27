@@ -72,7 +72,7 @@ void runModel(RunInfo& info)
 
 struct ModelResults {
    int n, nError, nScore;
-   int pShift[2]; // {P(shift|win), P(shift|loss)}
+   double pShift[2]; // {P(shift|win), P(shift|loss)}
 };
 
 void runNormal(RunData& run, ModelResults& results)
@@ -98,7 +98,7 @@ void runNormal(RunData& run, ModelResults& results)
 // and losses.
 void runCountShiftProbs(RunData& run, ModelResults& results)
 {
-   int x, y, prevWon, prevY;
+   int x, y, wonPrev, yPrev;
    int n, nWin = 0, nWinShift = 0, nLoss = 0, nLossShift = 0, start = 0;
 
    results.n = results.nScore = run.info.nIter;
@@ -117,18 +117,18 @@ void runCountShiftProbs(RunData& run, ModelResults& results)
       x = run.markov.step();
       run.agent.learn(x);
       if (n >= start) {
-         if (prevWon) {
+         if (wonPrev) {
             nWin++;
-            if (y != prevY)
+            if (y != yPrev)
                nWinShift++;
          } else {
             nLoss++;
-            if (y != prevY)
+            if (y != yPrev)
                nLossShift++;
          }
       }
-      prevWon = (x == y);
-      prevY = y;
+      wonPrev = (x == y);
+      yPrev = y;
    }
 
    results.pShift[0] = nWinShift / (double) nWin;
