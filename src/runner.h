@@ -14,7 +14,9 @@ struct RunInfo {
    int printScore;
    int outputMode; // for possible values, see enum OutputMode
    int nRepetitions;
-   int nScore;
+   int nScore; // number of results to score (counting from end)
+   int shiftProbsStep; // print probabilities every `N` steps
+                       // (N = 0: print only the final value)
 };
 
 // Possible modes of outputting simulation data, set via

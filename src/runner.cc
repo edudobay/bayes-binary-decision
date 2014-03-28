@@ -96,10 +96,11 @@ void runNormal(RunData& run, ModelResults& results)
 
 // Run the simulation counting the frequencies of response-shifts after wins
 // and losses.
-void runCountShiftProbs(RunData& run, ModelResults& results)
+void runCountShiftProbs(RunData& run, ModelResults& results, std::ostream& fOut)
 {
    int x, y, wonPrev, yPrev;
    int n, nWin = 0, nWinShift = 0, nLoss = 0, nLossShift = 0, start = 0;
+   int printStep = run.info.shiftProbsStep;
 
    results.n = results.nScore = run.info.nIter;
 
@@ -126,6 +127,11 @@ void runCountShiftProbs(RunData& run, ModelResults& results)
             if (y != yPrev)
                nLossShift++;
          }
+         if (printStep != 0 && (n + 1) % printStep == 0) {
+            results.pShift[0] = nWinShift / (double) nWin;
+            results.pShift[1] = nLossShift / (double) nLoss;
+            fOut << results.pShift[0] << '\t' << results.pShift[1] << "\n";
+         }
       }
       wonPrev = (x == y);
       yPrev = y;
@@ -133,6 +139,11 @@ void runCountShiftProbs(RunData& run, ModelResults& results)
 
    results.pShift[0] = nWinShift / (double) nWin;
    results.pShift[1] = nLossShift / (double) nLoss;
+   if (printStep == 0)
+      fOut << results.pShift[0] << '\t' << results.pShift[1] << "\n";
+   else // add an extra line break if outputting multiple lines per run
+      fOut << "\n";
+
 }
 
 void runWithOutput(RunData& run, ModelResults& results, std::ostream& output)
@@ -162,16 +173,16 @@ void runModel(RunData& run)
    // markov.clean();
    ModelResults results;
    if (info.fileName) {
-      ofstream fl(info.fileName);
+      ofstream fOut(info.fileName);
       switch (info.outputMode) {
       case OutputEvolution:
-         runWithOutput(run, results, fl);
+         runWithOutput(run, results, fOut);
          break;
 
       case OutputScore:
          for (int i = 0; i < info.nRepetitions; i++) {
             runNormal(run, results);
-            fl << (double)results.nError / results.nScore << "\n";
+            fOut << (double)results.nError / results.nScore << "\n";
 
             markov.clean();
             agent.reset();
@@ -182,8 +193,7 @@ void runModel(RunData& run)
 
       case OutputShiftProbs:
          for (int i = 0; i < info.nRepetitions; i++) {
-            runCountShiftProbs(run, results);
-            fl << results.pShift[0] << '\t' << results.pShift[1] << "\n";
+            runCountShiftProbs(run, results, fOut);
 
             markov.clean();
             agent.reset();

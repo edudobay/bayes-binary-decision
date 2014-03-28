@@ -28,6 +28,7 @@ class RunInfo(Structure):
       ('outputMode', c_int),
       ('nRepetitions', c_int),
       ('nScore', c_int),
+      ('shiftProbsStep', c_int),
    ]
 
 def make_array(args):
@@ -55,6 +56,7 @@ def create_runinfo(**kwargs):
       outputMode=int(kwargs.get('outputMode', 0)),
       nRepetitions=int(kwargs.get('nRepetitions', 1)),
       nScore=int(kwargs.get('nScore', 0)),
+      shiftProbsStep=int(kwargs.get('shiftProbsStep', 0)),
    )
    return ri
 
