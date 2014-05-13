@@ -3,11 +3,14 @@ import os
 
 __all__ = ['RunInfo', 'set_datadir', 'run', 'create_runinfo', 'LC']
 
+def load_lib():
+   basedir = os.path.dirname(__file__)
+   libdir = os.path.join(basedir, 'build')
+   libfile = 'libdecider.so' if os.name != 'nt' else 'decider.dll'
+   return CDLL(os.path.join(libdir, libfile))
+
 datadir = os.path.expanduser('~/Decisao/data')
-if os.name == 'nt':
-   _lib = CDLL('./build/decider.dll')
-else:
-   _lib = CDLL('./build/libdecider.so')
+_lib = load_lib()
 
 def set_datadir(path):
    global datadir
