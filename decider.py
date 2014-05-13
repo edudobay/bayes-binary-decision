@@ -1,7 +1,7 @@
 from ctypes import *
 import os
 
-__all__ = ['RunInfo', 'set_datadir', 'run', 'create_runinfo']
+__all__ = ['RunInfo', 'set_datadir', 'run', 'create_runinfo', 'LC']
 
 datadir = os.path.expanduser('~/Decisao/data')
 if os.name == 'nt':
@@ -40,6 +40,9 @@ def asciiize(s):
 
 def Data(fname):
    return (datadir + '/' + fname).encode('ascii')
+
+def LC(c0, c1):
+   return make_array((c0, c1))
 
 def create_runinfo(**kwargs):
    ri = RunInfo(
