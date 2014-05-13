@@ -3,6 +3,8 @@
 #include "runner.h"
 #include <iostream>
 #include <fstream>
+#include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -73,6 +75,7 @@ void runModel(RunInfo& info)
 struct ModelResults {
    int n, nError, nScore;
    double pShift[2]; // {P(shift|win), P(shift|loss)}
+   int run = 0;
 };
 
 void runNormal(RunData& run, ModelResults& results)
@@ -164,6 +167,28 @@ void runWithOutput(RunData& run, ModelResults& results, std::ostream& output)
    }
 }
 
+void runNormalAverage(RunData& run, ModelResults& results, vector<double>& data)
+{
+   int x, y, n;
+   results.n = run.info.nIter;
+   results.nError = 0;
+
+   vector<double>::iterator output = data.begin();
+
+   for (n = 0; n < run.info.nIter; n++) {
+      y = run.agent.respond();
+      x = run.markov.step();
+      run.agent.learn(x);
+      if (x != y) results.nError++;
+      vector<double> metrics = run.agent.get_metrics();
+
+      // accumulate error and metrics
+      *output++ += results.nError;
+      for (double m : metrics)
+         *output++ += m;
+   }
+}
+
 void runModel(RunData& run)
 {
    const RunInfo& info = run.info;
@@ -201,6 +226,35 @@ void runModel(RunData& run)
             markov.prepare();
          }
          break;
+
+      case OutputAveraged: {
+         // zero-initialized matrix for accumulating sums
+         int row_size = 1 + agent.get_metrics_size();
+         vector<double> data(info.nIter * row_size, 0.0);
+
+         for (int i = 0; i < info.nRepetitions; i++) {
+            runNormalAverage(run, results, data);
+
+            markov.clean();
+            agent.reset();
+            prepareRandom(run);
+            markov.prepare();
+         }
+
+         // average
+         for (double& v : data) {
+            v /= info.nRepetitions;
+         }
+
+         for (int i = 0; i < info.nIter; i++) {
+            fOut << data[i*row_size];
+            for (int j = 1; j < row_size; j++)
+               fOut << '\t' << data[i*row_size + j];
+            fOut << '\n';
+         }
+
+         break;
+      }
 
       }
    }

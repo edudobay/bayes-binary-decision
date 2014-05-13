@@ -29,6 +29,7 @@ public:
    virtual void learn(int result) = 0;
 
    virtual vector<double> get_metrics() const;
+   int get_metrics_size() const;
 
    static Agent* create(string id, int order);
 

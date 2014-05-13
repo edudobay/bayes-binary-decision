@@ -39,9 +39,12 @@ int Agent::respond()
    return answer;
 }
 
-vector<double> Agent::get_metrics() const
-{
+vector<double> Agent::get_metrics() const {
    return prob;
+}
+
+int Agent::get_metrics_size() const {
+   return prob.size();
 }
 
 Agent* Agent::create(string id, int order)

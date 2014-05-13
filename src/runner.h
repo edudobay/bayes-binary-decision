@@ -26,6 +26,7 @@ enum OutputMode {
                          // and extra parameters of the agent.
    OutputScore      = 1, // Output only the final error rate of the agent.
    OutputShiftProbs = 2, // Output only the computed P(shift|{win,loss}).
+   OutputAveraged   = 3, // Output averaged error and probability curves.
 };
 
 // extern "C"
