@@ -186,6 +186,11 @@ void runNormalAverage(RunData& run, ModelResults& results, vector<double>& data)
       *output++ += results.nError;
       for (double m : metrics)
          *output++ += m;
+
+      // accumulate squares (for computing the variance)
+      *output++ += results.nError * results.nError;
+      for (double m : metrics)
+         *output++ += m * m;
    }
 }
 
@@ -230,7 +235,7 @@ void runModel(RunData& run)
       case OutputAveraged: {
          // zero-initialized matrix for accumulating sums
          int row_size = 1 + agent.get_metrics_size();
-         vector<double> data(info.nIter * row_size, 0.0);
+         vector<double> data(info.nIter * 2 * row_size, 0.0);
 
          for (int i = 0; i < info.nRepetitions; i++) {
             runNormalAverage(run, results, data);
@@ -247,9 +252,13 @@ void runModel(RunData& run)
          }
 
          for (int i = 0; i < info.nIter; i++) {
-            fOut << data[i*row_size];
+            fOut << data[i*2*row_size];
             for (int j = 1; j < row_size; j++)
-               fOut << '\t' << data[i*row_size + j];
+               fOut << '\t' << data[i*2*row_size + j];
+            for (int j = 0; j < row_size; j++) {
+               double s = data[i*2*row_size + j];
+               fOut << '\t' << data[i*2*row_size + row_size + j] - s*s;
+            }
             fOut << '\n';
          }
 
