@@ -5,6 +5,7 @@
 #include <fstream>
 #include <vector>
 #include <algorithm>
+#include <cmath>
 
 using namespace std;
 
@@ -182,13 +183,15 @@ void runNormalAverage(RunData& run, ModelResults& results, vector<double>& data)
       if (x != y) results.nError++;
       vector<double> metrics = run.agent.get_metrics();
 
+      double errorRate = results.nError / (n + 1.0);
+
       // accumulate error and metrics
-      *output++ += results.nError;
+      *output++ += errorRate;
       for (double m : metrics)
          *output++ += m;
 
       // accumulate squares (for computing the variance)
-      *output++ += results.nError * results.nError;
+      *output++ += errorRate * errorRate;
       for (double m : metrics)
          *output++ += m * m;
    }
@@ -257,7 +260,7 @@ void runModel(RunData& run)
                fOut << '\t' << data[i*2*row_size + j];
             for (int j = 0; j < row_size; j++) {
                double s = data[i*2*row_size + j];
-               fOut << '\t' << data[i*2*row_size + row_size + j] - s*s;
+               fOut << '\t' << sqrt(data[i*2*row_size + row_size + j] - s*s);
             }
             fOut << '\n';
          }
