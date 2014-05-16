@@ -229,14 +229,15 @@ void AgentWS::learn(int result)
 
    if (time > order) {
       m[state]++;
-      update_prob(state);
-      if (wasCorrect != didStay)
+      if (wasCorrect == didStay)
          j[state]++;
+      update_prob(state);
    }
    update_state();
 }
 
-// must be called BEFORE updating j
+// xx xxx xxxx: must be called BEFORE updating j
+// 14 May 2014: Why??
 void AgentWS::update_prob(int state)
 {
    const int& m = this->m[state];
