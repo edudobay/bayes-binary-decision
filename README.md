@@ -1,22 +1,32 @@
-decision
-========
+BayesDecider
+============
 
 Simulation of decision-making bayesian agents; analysis (mainly graphs) of results.
 
 The simulations themselves are done in a C++ program, which is wrapped inside a
 Python extension module to ease running.
 
-Build instructions
-------------------
+Organisation
+------------
 
-**Requirements:**
+* `src/` — C++ library (build with SCons)
+* `decider/` — Python utilities 
+* `pydecider.cpp` — Python extension module, links with C++ library (build via setup.py)
+
+Other files are currently obsolete but I haven't still taken the time to decide
+what to do with them ;)
+
+Build recipe
+------------
+
+### Requirements
 
 * g++
 * SCons for building the C++ library
 * Python 3 (I use 3.4 but I'm not sure what the bare minimum is; I think it is 3.2)
 * numpy for some data manipulation and analysis
 
-**Steps:**
+### Instructions
 
 * Run `scons` to build the C++ library.
 

@@ -13,7 +13,7 @@ setup(
    description = "Bayesian decision-making algorithm for predicting Markov chains, and related tools",
    author = 'Eduardo Dobay',
    author_email = 'edudobay@gmail.com',
-   url = 'https://github.com/edudobay/decision',
+   url = 'https://github.com/edudobay/BayesDecider',
 
    packages = ['decider'],
    ext_modules = [ext_core],
