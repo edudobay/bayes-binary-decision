@@ -11,15 +11,15 @@
 #ifdef __cplusplus
 extern "C" {
    static PyObject *
-   decider_run(PyObject *self, PyObject *args, PyObject *keywds);
+   decider_core_run(PyObject *self, PyObject *args, PyObject *keywds);
 
    PyMODINIT_FUNC
-   PyInit_decider(void);
+   PyInit_core(void);
 }
 #endif
 
 static PyObject *
-decider_run(PyObject *self, PyObject *args, PyObject *keywds)
+decider_core_run(PyObject *self, PyObject *args, PyObject *keywds)
 {
    PyObject *agentLC = NULL, *machineProbs = NULL;
    PyObject *agentLC_seq = NULL, *machineProbs_seq = NULL;
@@ -136,8 +136,8 @@ decider_run(PyObject *self, PyObject *args, PyObject *keywds)
    Py_RETURN_NONE;
 }
 
-static PyMethodDef DeciderMethods[] = {
-   {"run", (PyCFunction)decider_run, METH_VARARGS | METH_KEYWORDS,
+static PyMethodDef DeciderCoreMethods[] = {
+   {"run", (PyCFunction)decider_core_run, METH_VARARGS | METH_KEYWORDS,
       "Run the model with the given parameters (all may be given as\n"
       "keyword arguments):\n"
       "\n"
@@ -163,18 +163,18 @@ static PyMethodDef DeciderMethods[] = {
    {NULL, NULL, 0, NULL}
 };
 
-static struct PyModuleDef decider_module = {
+static struct PyModuleDef decider_core_module = {
    PyModuleDef_HEAD_INIT,
    "decider", /* name of module */
    "Bayesian decision-making algorithm for predicting Markov chains", /* module documentation (may be NULL) */
    -1, /* size of per-interpreter state of the module, or -1 if the module
           keeps state in global variables */
-   DeciderMethods
+   DeciderCoreMethods
 };
 
 PyMODINIT_FUNC
-PyInit_decider(void)
+PyInit_core(void)
 {
-   return PyModule_Create(&decider_module);
+   return PyModule_Create(&decider_core_module);
 }
 

@@ -1,6 +1,6 @@
 from distutils.core import setup, Extension
 
-module1 = Extension('decider',
+module1 = Extension('decider.core',
    include_dirs = ['src'],
    library_dirs = ['build/shared'],
    libraries = ['decider_dyn'],
