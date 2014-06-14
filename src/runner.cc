@@ -20,12 +20,6 @@ struct RunData {
 //void runModel(const RunInfo& info, MarkovMachine& markov, Agent& agent);
 void runModel(RunData& run);
 
-#ifdef __MINGW32__
-# define EXPORT extern "C" __declspec(dllexport)
-#else
-# define EXPORT extern "C"
-#endif
-
 void prepareRandom(RunData& run)
 {
    // Setup random generators
@@ -49,8 +43,10 @@ void prepareRandom(RunData& run)
 }
 
 EXPORT
-void runModel(RunInfo& info)
+void runModel(const RunInfo* pInfo)
 {
+   const RunInfo& info = *pInfo;
+
    // Setup machine
    MarkovMachine markov(info.machineOrder);
    markov.setProb(info.machineProbs);

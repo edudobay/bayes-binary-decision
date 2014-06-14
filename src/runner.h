@@ -27,9 +27,23 @@ enum OutputMode {
    OutputScore      = 1, // Output only the final error rate of the agent.
    OutputShiftProbs = 2, // Output only the computed P(shift|{win,loss}).
    OutputAveraged   = 3, // Output averaged error and probability curves.
+   OutputMode_MAX
 };
 
-// extern "C"
-// void runModel(const RunInfo& info);
+#ifdef __cplusplus
+# ifdef __MINGW32__
+#  define EXPORT extern "C" __declspec(dllexport)
+# else
+#  define EXPORT extern "C"
+# endif
+#else
+# ifdef __MINGW32__
+#  define EXPORT __declspec(dllexport)
+# else
+#  define EXPORT
+# endif
+#endif
+
+EXPORT void runModel(const struct RunInfo* info);
 
 #endif /* __RUNNER_H_ */
