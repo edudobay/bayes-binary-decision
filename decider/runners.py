@@ -1,7 +1,8 @@
 import math
 import string
 import concurrent.futures
-from decider.core import *
+from .core import *
+from .common import *
 
 # Predefined machines
 machines = {
@@ -97,7 +98,7 @@ def msimulate(*args, workers=8, **kwargs):
    """Calls `simulate` in a multiprocessing context, with a maximum of
    `workers` parallel processes, and waits for all processes to complete."""
 
-   with concurrent.futures.ProcessPoolExecutor(max_workers=threads) as executor:
+   with concurrent.futures.ProcessPoolExecutor(max_workers=workers) as executor:
       futures = simulate(*args, executor=executor, **kwargs)
       for future in concurrent.futures.as_completed(futures):
          future.result()
