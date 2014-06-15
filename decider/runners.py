@@ -116,6 +116,9 @@ def lcsimulate(lcs, *args, **kwargs):
    the given sequence of pairs of learning modulation coefficients."""
 
    fileNameFormat = kwargs.get('fileNameFormat', '{machine}/o{aorder}{model}_L{LC}.rate')
+   if 'outputMode' not in kwargs:
+      kwargs['outputMode'] = 1
+
    formatter = string.Formatter()
 
    for (c0, c1) in lcs:
