@@ -1,7 +1,7 @@
 from distutils.core import setup, Extension
 
 ext_core = Extension('decider.core',
-   include_dirs = ['src'],
+   include_dirs = ['core'],
    library_dirs = ['build/shared'],
    libraries = ['decider_dyn'],
    sources = ['pydecider.cpp']

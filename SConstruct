@@ -38,17 +38,17 @@ libsources = Split("""
 """)
 
 shared = env.Clone()
-shared.VariantDir('build/shared', 'src', duplicate=0)
+shared.VariantDir('build/shared', 'core', duplicate=0)
 shared_lib = shared.SharedLibrary('build/shared/decider', File(libsources, 'build/shared'))
 staticdyn_lib = shared.StaticPicLibrary('build/shared/decider_dyn', File(libsources, 'build/shared'))
 
 static = env.Clone()
-static.VariantDir('build/static', 'src', duplicate=0)
+static.VariantDir('build/static', 'core', duplicate=0)
 static_lib = static.StaticLibrary('build/static/decider', File(libsources, 'build/static'))
 
 env.Default([shared_lib, staticdyn_lib, static_lib])
 
-env.VariantDir('build', 'src', duplicate=0)
+env.VariantDir('build', 'core', duplicate=0)
 test = env.Program('build/test', File(['main.cc'] + libsources), 'build')
 env.Alias('test', test)
 
